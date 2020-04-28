@@ -1,0 +1,133 @@
+---
+title: "Checkpoint E"
+author: "Ningqiao Li"
+date: "April 28, 2020"
+output: html_notebook
+---
+
+***
+
+### 1.
+library(tidyverse)
+
+***
+
+### 2.
+```{r}
+library(here)
+health <- read_csv("Small Cities Health Data.csv")
+```
+
+***
+
+### 3.
+
+```{r}
+as.data.frame(health)
+health <- as_tibble(health)
+health
+```
+
+***
+
+### 4.
+
+```{r}
+ggplot(data = health) +
+  geom_point(mapping = aes(x = hosp.beds, y = doctors))
+```
+
+***
+
+### 5.
+
+```{r}
+health %>%
+  filter(hosp.beds < 1000) %>%
+  ggplot(aes(x = hosp.beds, y = doctors)) +
+  geom_point()
+```
+
+***
+
+### 6. 
+
+```{r}
+ggplot(data = health, mapping = (aes(x = hosp.beds, y = doctors))) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+***
+
+### 7. 
+
+```{r}
+density <- read_csv("Small Cities Densities.csv")
+health <- health %>%
+  left_join(density, by = "city.code")
+```
+
+***
+
+### 8.
+```{r}
+density.cat <- cut(health$density,
+                  c(0, 80, 120, 300))
+levels(density.cat) <- c("Low", "Middle", "High")
+health
+```
+
+***
+
+### 9. 
+
+```{r}
+ggplot(data = health, mapping = (aes(x = hosp.beds, y = doctors))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(vars(density.cat))
+```
+
+***
+
+### 10
+
+```{r}
+ggplot(data = health, mapping = (aes(x = hosp.beds, y = doctors))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(vars(density.cat)) +
+  labs (title = "Relationship between number of doctors and hospital beds by density of city",
+          x = "Number of hospital beds",
+          y = "Number of doctors")
+```
+
+***
+
+### 11.
+
+```{r}
+patients <- read_csv("Patient Data.csv")
+head(patients)
+patients$patient <- str_sub(patients$patient, 9)
+patients$patient
+patients
+```
+
+***
+
+### 12. 
+
+```{r}
+tidy.patients <- patients %>%
+  gather(reading.1, reading.2, reading.3,
+         key = "reading",
+         value = "score") %>%
+  arrange(patient)
+tidy.patients  
+```
+
+
+
+
