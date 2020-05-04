@@ -53,7 +53,9 @@ health %>%
 ### 6. 
 
 ```{r}
-ggplot(data = health, mapping = (aes(x = hosp.beds, y = doctors))) +
+health %>%
+  filter(hosp.beds < 1000) %>%
+  ggplot(aes(x = hosp.beds, y = doctors)) +
   geom_point() +
   geom_smooth(method = "lm")
 ```
@@ -72,9 +74,18 @@ health <- health %>%
 
 ### 8.
 ```{r}
-density.cat <- cut(health$density,
+health$density.cat <- cut(health$density,
                   c(0, 80, 120, 300))
-levels(density.cat) <- c("Low", "Middle", "High")
+levels(health$density.cat) <- c("Low", "Middle", "High")
+health
+```
+
+alternative solution
+```{r}
+health <- health %>%
+  mutate(dens.cat = cut(density,
+                        breaks = c(-Inf, 80, 120, Inf),
+                        labels = c("Low", "Middle", "High")))
 health
 ```
 
@@ -115,6 +126,14 @@ patients$patient
 patients
 ```
 
+# alternative solution
+```{r}
+patients2 <- patients %>%
+  mutate(patient = word(patient, 2))
+patients2
+```
+
+
 ***
 
 ### 12. 
@@ -128,6 +147,13 @@ tidy.patients <- patients %>%
 tidy.patients  
 ```
 
-
+# alternative solution
+```{r}
+patients <- patients %>%
+  gather(reading.1, reading.2, reading.3,
+         key ="trail",
+         value = "reading") %>%
+  mutate(trail = str_sub(trail, -1))
+```
 
 
